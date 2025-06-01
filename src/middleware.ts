@@ -64,6 +64,63 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
+    // Rol tabanlı erişim kontrolü
+    if (isProtectedPage && session?.user) {
+      try {
+        // Kullanıcı profilini al
+        const { data: userProfile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('email', session.user.email)
+          .single()
+
+        const userRole = userProfile?.role || 'garson'
+
+        // Admin-only sayfalar
+        const adminOnlyPaths = [
+          '/dashboard/admin',
+          '/dashboard/staff',
+          '/dashboard/categories'
+        ]
+
+        // Garson-only sayfalar
+        const garsonOnlyPaths = [
+          '/dashboard/garson'
+        ]
+
+        // Mutfak-only sayfalar
+        const mutfakOnlyPaths = [
+          '/dashboard/mutfak'
+        ]
+
+        // Admin olmayan kullanıcıların admin sayfalarına erişimini engelle
+        if (adminOnlyPaths.some(path => pathname.startsWith(path)) && userRole !== 'admin') {
+          console.log(`Middleware - Access denied: ${userRole} trying to access admin page`)
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        // Garson olmayan kullanıcıların garson sayfalarına erişimini engelle
+        if (garsonOnlyPaths.some(path => pathname.startsWith(path)) && userRole !== 'garson') {
+          console.log(`Middleware - Access denied: ${userRole} trying to access garson page`)
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        // Mutfak olmayan kullanıcıların mutfak sayfalarına erişimini engelle
+        if (mutfakOnlyPaths.some(path => pathname.startsWith(path)) && userRole !== 'mutfak') {
+          console.log(`Middleware - Access denied: ${userRole} trying to access mutfak page`)
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        console.log(`Middleware - Access granted: ${userRole} accessing ${pathname}`)
+      } catch (error) {
+        console.error('Middleware - Role check error:', error)
+        // Hata durumunda genel dashboard'a yönlendir
+        if (pathname !== '/dashboard') {
+          return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+      }
+    }
+
     return supabaseResponse
 
   } catch (error) {
