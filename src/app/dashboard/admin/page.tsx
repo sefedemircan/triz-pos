@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Grid,
   Card,
@@ -13,6 +14,7 @@ import {
   Badge,
   Progress,
   ActionIcon,
+  Button,
 } from '@mantine/core'
 import {
   IconUsers,
@@ -21,6 +23,8 @@ import {
   IconTable,
   IconRefresh,
   IconShield,
+  IconClipboardList,
+  IconUserCog,
 } from '@tabler/icons-react'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { useAuth } from '@/components/providers/AuthProvider'
@@ -39,6 +43,7 @@ interface DashboardStats {
 
 export default function AdminDashboardPage() {
   const { user } = useAuth()
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     totalTables: 0,
     occupiedTables: 0,
@@ -232,10 +237,59 @@ export default function AdminDashboardPage() {
 
         <Card withBorder>
           <Title order={3} mb="md">Hızlı Erişim</Title>
-          <Text size="sm" c="dimmed">
-            Admin olarak tüm sistem özelliklerine sol menüden erişebilirsiniz:
-            Ürün Yönetimi, Personel Yönetimi, Masa Yönetimi, Kategori Yönetimi ve daha fazlası.
-          </Text>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
+            <Button
+              variant="light"
+              size="lg"
+              leftSection={<IconClipboardList size="1.2rem" />}
+              onClick={() => router.push('/dashboard/admin/orders')}
+              style={{ height: 'auto', padding: '1rem' }}
+            >
+              <Stack gap="xs" align="center">
+                <Text fw={600}>Sipariş Yönetimi</Text>
+                <Text size="xs" c="dimmed">Detaylı sipariş takibi</Text>
+              </Stack>
+            </Button>
+            
+            <Button
+              variant="light"
+              size="lg"
+              leftSection={<IconChefHat size="1.2rem" />}
+              onClick={() => router.push('/dashboard/products')}
+              style={{ height: 'auto', padding: '1rem' }}
+            >
+              <Stack gap="xs" align="center">
+                <Text fw={600}>Ürün Yönetimi</Text>
+                <Text size="xs" c="dimmed">Menü düzenleme</Text>
+              </Stack>
+            </Button>
+            
+            <Button
+              variant="light"
+              size="lg"
+              leftSection={<IconUserCog size="1.2rem" />}
+              onClick={() => router.push('/dashboard/staff')}
+              style={{ height: 'auto', padding: '1rem' }}
+            >
+              <Stack gap="xs" align="center">
+                <Text fw={600}>Personel</Text>
+                <Text size="xs" c="dimmed">Kullanıcı yönetimi</Text>
+              </Stack>
+            </Button>
+            
+            <Button
+              variant="light"
+              size="lg"
+              leftSection={<IconTable size="1.2rem" />}
+              onClick={() => router.push('/dashboard/tables')}
+              style={{ height: 'auto', padding: '1rem' }}
+            >
+              <Stack gap="xs" align="center">
+                <Text fw={600}>Masa Yönetimi</Text>
+                <Text size="xs" c="dimmed">Masa düzenleme</Text>
+              </Stack>
+            </Button>
+          </SimpleGrid>
         </Card>
       </Stack>
     </DashboardLayout>

@@ -27,6 +27,7 @@ import {
   IconShield,
   IconUser,
   IconPlus,
+  IconClipboardList,
 } from '@tabler/icons-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/components/providers/AuthProvider'
@@ -43,6 +44,7 @@ const getNavigationByRole = (role: string) => {
     case 'admin':
       return [
         { label: 'Admin Dashboard', href: '/dashboard/admin', icon: IconShield },
+        { label: 'Sipariş Yönetimi', href: '/dashboard/admin/orders', icon: IconClipboardList },
         { label: 'Masalar', href: '/dashboard/tables', icon: IconTable },
         { label: 'Kategoriler', href: '/dashboard/categories', icon: IconCategory },
         { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat },

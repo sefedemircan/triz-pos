@@ -20,6 +20,7 @@ import {
   Loader,
   Center,
   Image,
+  Box,
 } from '@mantine/core'
 import {
   IconPlus,
@@ -29,6 +30,8 @@ import {
   IconChefHat,
   IconCurrencyLira,
   IconInfoCircle,
+  IconPhoto,
+  IconPhotoOff,
 } from '@tabler/icons-react'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
@@ -65,6 +68,12 @@ export default function ProductsPage() {
       name: (value) => (value.length < 2 ? 'Ürün adı en az 2 karakter olmalı' : null),
       price: (value) => (value <= 0 ? 'Fiyat 0\'dan büyük olmalı' : null),
       category_id: (value) => (!value ? 'Kategori seçmelisiniz' : null),
+      image_url: (value) => {
+        if (value && !isValidImageUrl(value)) {
+          return 'Geçerli bir resim URL\'si girin (jpg, jpeg, png, gif, webp)'
+        }
+        return null
+      },
     },
   })
 
@@ -243,6 +252,22 @@ export default function ProductsPage() {
     return matchesSearch && matchesCategory
   })
 
+  // URL validasyon fonksiyonu
+  const isValidImageUrl = (url: string) => {
+    try {
+      const urlObj = new URL(url)
+      const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+      const pathname = urlObj.pathname.toLowerCase()
+      return validExtensions.some(ext => pathname.endsWith(ext)) || 
+             url.includes('unsplash.com') || 
+             url.includes('images.') ||
+             url.includes('cdn.') ||
+             url.includes('imgur.com')
+    } catch {
+      return false
+    }
+  }
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -304,18 +329,39 @@ export default function ProductsPage() {
           <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }}>
             {filteredProducts.map((product) => (
               <Card key={product.id} withBorder>
-                {product.image_url && (
+                {/* Ürün Görseli */}
+                {product.image_url ? (
                   <Card.Section>
                     <Image
                       src={product.image_url}
                       height={160}
                       alt={product.name}
-                      fallbackSrc="https://via.placeholder.com/300x160?text=Ürün+Resmi"
+                      fallbackSrc="https://via.placeholder.com/300x160?text=Resim+Yüklenemedi"
+                      onError={() => {
+                        console.log('Image load error for:', product.image_url)
+                      }}
                     />
+                  </Card.Section>
+                ) : (
+                  <Card.Section>
+                    <Box
+                      h={160}
+                      style={{
+                        backgroundColor: '#f8f9fa',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        gap: '8px'
+                      }}
+                    >
+                      <IconPhotoOff size="2rem" color="#adb5bd" />
+                      <Text size="sm" c="dimmed">Resim yok</Text>
+                    </Box>
                   </Card.Section>
                 )}
 
-                <Stack gap="xs" mt="md">
+                <Stack gap="md" p="md">
                   <Group justify="space-between" align="flex-start">
                     <div style={{ flex: 1 }}>
                       <Text fw={500} size="lg">{product.name}</Text>
@@ -421,9 +467,27 @@ export default function ProductsPage() {
 
               <TextInput
                 label="Resim URL"
-                placeholder="https://example.com/image.jpg (opsiyonel)"
+                placeholder="https://example.com/image.jpg"
+                leftSection={<IconPhoto size="1rem" />}
+                description="Ürün fotoğrafının URL'sini girin (jpg, png, gif, webp formatları desteklenir)"
                 {...form.getInputProps('image_url')}
               />
+
+              {/* Resim Önizlemesi */}
+              {form.values.image_url && isValidImageUrl(form.values.image_url) && (
+                <Box>
+                  <Text size="sm" fw={500} mb="xs">Resim Önizlemesi:</Text>
+                  <Image
+                    src={form.values.image_url}
+                    height={120}
+                    width={200}
+                    alt="Önizleme"
+                    radius="md"
+                    fallbackSrc="https://via.placeholder.com/200x120?text=Resim+Yüklenemedi"
+                    style={{ border: '1px solid #e9ecef' }}
+                  />
+                </Box>
+              )}
 
               <Select
                 label="Durum"
@@ -435,7 +499,7 @@ export default function ProductsPage() {
                 onChange={(value) => form.setFieldValue('is_available', value === 'true')}
               />
 
-              <Group justify="flex-end" mt="md">
+              <Group justify="flex-end">
                 <Button
                   variant="outline"
                   onClick={() => {
