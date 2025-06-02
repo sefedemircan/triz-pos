@@ -39,7 +39,7 @@ type Table = {
 type Order = {
   id: string
   table_id: string
-  status: 'active' | 'completed' | 'cancelled'
+  status: 'active' | 'ready' | 'completed' | 'cancelled'
   total_amount: number
   created_at: string
 }
@@ -61,11 +61,11 @@ export default function GarsonDashboardPage() {
         .select('*')
         .order('table_number')
       
-      // Aktif siparişler
+      // Aktif siparişler (active ve ready durumlarındaki)
       const { data: ordersData } = await supabase
         .from('orders')
         .select('*')
-        .eq('status', 'active')
+        .in('status', ['active', 'ready'])
         .order('created_at', { ascending: false })
 
       setTables(tablesData || [])

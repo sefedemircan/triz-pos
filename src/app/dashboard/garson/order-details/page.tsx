@@ -89,7 +89,7 @@ export default function OrderDetailsPage() {
           )
         `)
         .eq('table_id', tableId)
-        .eq('status', 'active')
+        .in('status', ['active', 'ready'])
         .order('created_at', { ascending: false })
         .limit(1)
         .single()
@@ -178,35 +178,39 @@ export default function OrderDetailsPage() {
   const completeOrder = async () => {
     if (!order) return
 
+    // Ready durumundaki siparişler için uyarı
+    if (order.status === 'ready') {
+      notifications.show({
+        title: 'Bilgi',
+        message: 'Bu sipariş hazır durumda. Ödeme işlemi admin tarafından yapılmalıdır.',
+        color: 'blue',
+      })
+      return
+    }
+
     try {
       const supabase = createClient()
       
-      // Siparişi tamamla
+      // Siparişi ready durumuna geçir (ödeme için)
       const { error: orderError } = await supabase
         .from('orders')
-        .update({ status: 'completed' })
+        .update({ status: 'ready' })
         .eq('id', order.id)
 
       if (orderError) throw orderError
 
-      // Masayı boşalt
-      await supabase
-        .from('tables')
-        .update({ status: 'empty' })
-        .eq('id', order.table_id)
-
       notifications.show({
         title: 'Başarılı',
-        message: 'Sipariş tamamlandı',
+        message: 'Sipariş servise hazır olarak işaretlendi. Ödeme için adminle iletişime geçin.',
         color: 'green',
       })
 
       router.push('/dashboard/garson')
     } catch (error) {
-      console.error('Order complete error:', error)
+      console.error('Order ready error:', error)
       notifications.show({
         title: 'Hata',
-        message: 'Sipariş tamamlanırken hata oluştu',
+        message: 'Sipariş güncellenirken hata oluştu',
         color: 'red',
       })
     }
@@ -265,8 +269,8 @@ export default function OrderDetailsPage() {
   if (!order) {
     return (
       <DashboardLayout>
-        <Alert color="red">
-          Sipariş bulunamadı veya yüklenirken hata oluştu.
+        <Alert color="blue">
+          Bu masa için aktif sipariş bulunamadı
         </Alert>
       </DashboardLayout>
     )
@@ -305,8 +309,9 @@ export default function OrderDetailsPage() {
             <Button
               color="green"
               onClick={completeOrder}
+              disabled={order.status === 'ready'}
             >
-              Tamamla
+              {order.status === 'ready' ? 'Ödeme Bekliyor' : 'Servise Hazır'}
             </Button>
           </Group>
         </Group>
@@ -317,8 +322,12 @@ export default function OrderDetailsPage() {
             <Stack gap="md">
               <Group justify="space-between">
                 <Title order={3}>Sipariş Bilgileri</Title>
-                <Badge color="blue" variant="filled">
-                  Aktif
+                <Badge 
+                  color={order.status === 'active' ? 'orange' : order.status === 'ready' ? 'blue' : 'green'} 
+                  variant="filled"
+                >
+                  {order.status === 'active' ? 'Hazırlanıyor' : 
+                   order.status === 'ready' ? 'Hazır' : 'Tamamlandı'}
                 </Badge>
               </Group>
 
@@ -416,8 +425,9 @@ export default function OrderDetailsPage() {
                 color="green"
                 leftSection={<IconCheck size="1rem" />}
                 onClick={completeOrder}
+                disabled={order.status === 'ready'}
               >
-                Siparişi Tamamla
+                {order.status === 'ready' ? 'Ödeme Bekliyor' : 'Servise Hazır'}
               </Button>
 
               <Button

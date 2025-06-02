@@ -34,10 +34,12 @@ import {
   IconTrendingUp,
   IconFilter,
   IconDownload,
+  IconCash,
 } from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { createClient } from '@/lib/supabase/client'
+import { PaymentModal } from '@/components/PaymentModal'
 import type { Database } from '@/lib/types/database'
 
 type Order = Database['public']['Tables']['orders']['Row']
@@ -65,6 +67,13 @@ interface OrderStats {
   cancelledOrders: number
 }
 
+interface PaymentData {
+  paymentMethod: 'cash' | 'card'
+  receivedAmount?: number
+  changeAmount?: number
+  notes?: string
+}
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<OrderWithDetails[]>([])
   const [filteredOrders, setFilteredOrders] = useState<OrderWithDetails[]>([])
@@ -81,6 +90,9 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [selectedOrder, setSelectedOrder] = useState<OrderWithDetails | null>(null)
   const [modalOpened, setModalOpened] = useState(false)
+  const [paymentModalOpened, setPaymentModalOpened] = useState(false)
+  const [paymentOrder, setPaymentOrder] = useState<OrderWithDetails | null>(null)
+  const [paymentLoading, setPaymentLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [dateFilter, setDateFilter] = useState<string>('')
@@ -148,7 +160,7 @@ export default function AdminOrdersPage() {
       averageOrderValue,
       todayOrders: todayOrders.length,
       todayRevenue,
-      activeOrders: ordersData.filter(o => o.status === 'active').length,
+      activeOrders: ordersData.filter(o => o.status === 'active' || o.status === 'ready').length,
       completedOrders: ordersData.filter(o => o.status === 'completed').length,
       cancelledOrders: ordersData.filter(o => o.status === 'cancelled').length,
     })
@@ -217,7 +229,8 @@ export default function AdminOrdersPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'blue'
+      case 'active': return 'orange'
+      case 'ready': return 'blue'
       case 'completed': return 'green'
       case 'cancelled': return 'red'
       default: return 'gray'
@@ -226,7 +239,8 @@ export default function AdminOrdersPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'Aktif'
+      case 'active': return 'Hazırlanıyor'
+      case 'ready': return 'Hazır'
       case 'completed': return 'Tamamlandı'
       case 'cancelled': return 'İptal'
       default: return status
@@ -258,6 +272,74 @@ export default function AdminOrdersPage() {
         message: 'Sipariş güncellenirken hata oluştu',
         color: 'red',
       })
+    }
+  }
+
+  const handlePaymentRequest = (order: OrderWithDetails) => {
+    setPaymentOrder(order)
+    setPaymentModalOpened(true)
+  }
+
+  const handlePaymentComplete = async (orderId: string, paymentData: PaymentData) => {
+    setPaymentLoading(true)
+    try {
+      const supabase = createClient()
+      
+      // Ödeme notunu hazırla
+      const paymentNote = [
+        `Ödeme: ${paymentData.paymentMethod === 'cash' ? 'Nakit' : 'Kart'}`,
+        paymentData.receivedAmount ? `Alınan: ₺${paymentData.receivedAmount.toFixed(2)}` : null,
+        paymentData.changeAmount ? `Para Üstü: ₺${paymentData.changeAmount.toFixed(2)}` : null,
+        paymentData.notes ? `Not: ${paymentData.notes}` : null,
+      ].filter(Boolean).join(' | ')
+
+      const order = orders.find(o => o.id === orderId)
+      const updatedNotes = order?.notes ? 
+        `${order.notes}\n\n${paymentNote}` : 
+        paymentNote
+
+      // 1. Siparişi completed olarak işaretle ve ödeme bilgilerini ekle
+      const { error: orderError } = await supabase
+        .from('orders')
+        .update({ 
+          status: 'completed',
+          payment_method: paymentData.paymentMethod,
+          notes: updatedNotes,
+        })
+        .eq('id', orderId)
+
+      if (orderError) throw orderError
+
+      // 2. Masayı boşalt
+      if (order?.table_id) {
+        const { error: tableError } = await supabase
+          .from('tables')
+          .update({ status: 'empty' })
+          .eq('id', order.table_id)
+
+        if (tableError) throw tableError
+      }
+
+      notifications.show({
+        title: 'Başarılı',
+        message: 'Ödeme işlemi tamamlandı ve masa boşaltıldı',
+        color: 'green',
+      })
+
+      // UI'ı güncelle
+      setPaymentModalOpened(false)
+      setPaymentOrder(null)
+      fetchOrders()
+
+    } catch (error) {
+      console.error('Payment error:', error)
+      notifications.show({
+        title: 'Hata',
+        message: 'Ödeme işlemi sırasında hata oluştu',
+        color: 'red',
+      })
+    } finally {
+      setPaymentLoading(false)
     }
   }
 
@@ -359,7 +441,7 @@ export default function AdminOrdersPage() {
         </Grid>
 
         {/* Filtreler */}
-        <Card withBorder p="md">
+        <Card withBorder>
           <Group>
             <TextInput
               placeholder="Sipariş ara (masa, garson, ID)..."
@@ -373,7 +455,8 @@ export default function AdminOrdersPage() {
               leftSection={<IconFilter size="1rem" />}
               data={[
                 { value: '', label: 'Tüm Durumlar' },
-                { value: 'active', label: 'Aktif' },
+                { value: 'active', label: 'Hazırlanıyor' },
+                { value: 'ready', label: 'Hazır' },
                 { value: 'completed', label: 'Tamamlandı' },
                 { value: 'cancelled', label: 'İptal' },
               ]}
@@ -405,8 +488,11 @@ export default function AdminOrdersPage() {
               <Tabs.Tab value="all">
                 Tümü ({orders.length})
               </Tabs.Tab>
-              <Tabs.Tab value="active" color="blue">
-                Aktif ({stats.activeOrders})
+              <Tabs.Tab value="active" color="orange">
+                Hazırlanıyor ({orders.filter(o => o.status === 'active').length})
+              </Tabs.Tab>
+              <Tabs.Tab value="ready" color="blue">
+                Hazır ({orders.filter(o => o.status === 'ready').length})
               </Tabs.Tab>
               <Tabs.Tab value="completed" color="green">
                 Tamamlandı ({stats.completedOrders})
@@ -479,16 +565,27 @@ export default function AdminOrdersPage() {
                           </Text>
                         </Table.Td>
                         <Table.Td>
-                          <ActionIcon
-                            variant="light"
-                            color="blue"
-                            onClick={() => {
-                              setSelectedOrder(order)
-                              setModalOpened(true)
-                            }}
-                          >
-                            <IconEye size="1rem" />
-                          </ActionIcon>
+                          <Group gap="xs">
+                            <ActionIcon
+                              variant="light"
+                              color="blue"
+                              onClick={() => {
+                                setSelectedOrder(order)
+                                setModalOpened(true)
+                              }}
+                            >
+                              <IconEye size="1rem" />
+                            </ActionIcon>
+                            {(order.status === 'active' || order.status === 'ready') && (
+                              <ActionIcon
+                                variant="light"
+                                color="green"
+                                onClick={() => handlePaymentRequest(order)}
+                              >
+                                <IconCash size="1rem" />
+                              </ActionIcon>
+                            )}
+                          </Group>
                         </Table.Td>
                       </Table.Tr>
                     ))}
@@ -593,16 +690,29 @@ export default function AdminOrdersPage() {
               </Card>
 
               {/* Durum Güncelleme */}
-              {selectedOrder.status === 'active' && (
+              {(selectedOrder.status === 'active' || selectedOrder.status === 'ready') && (
                 <Card withBorder>
-                  <Title order={4} mb="md">Sipariş Durumu</Title>
+                  <Title order={4} mb="md">Sipariş İşlemleri</Title>
                   <Group>
                     <Button
                       color="green"
-                      onClick={() => updateOrderStatus(selectedOrder.id, 'completed')}
+                      leftSection={<IconCash size="1rem" />}
+                      onClick={() => {
+                        setModalOpened(false)
+                        handlePaymentRequest(selectedOrder)
+                      }}
                     >
-                      Tamamla
+                      Ödeme Al
                     </Button>
+                    {selectedOrder.status === 'active' && (
+                      <Button
+                        color="blue"
+                        variant="outline"
+                        onClick={() => updateOrderStatus(selectedOrder.id, 'ready')}
+                      >
+                        Hazır İşaretle
+                      </Button>
+                    )}
                     <Button
                       color="red"
                       variant="outline"
@@ -616,6 +726,18 @@ export default function AdminOrdersPage() {
             </Stack>
           )}
         </Modal>
+
+        {/* Ödeme Modal */}
+        <PaymentModal
+          opened={paymentModalOpened}
+          onClose={() => {
+            setPaymentModalOpened(false)
+            setPaymentOrder(null)
+          }}
+          order={paymentOrder}
+          onComplete={handlePaymentComplete}
+          loading={paymentLoading}
+        />
       </Stack>
     </DashboardLayout>
   )

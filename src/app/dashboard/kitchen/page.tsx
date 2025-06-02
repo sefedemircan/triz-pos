@@ -24,6 +24,7 @@ import {
   IconRefresh,
   IconTable,
   IconCurrencyLira,
+  IconBell,
 } from '@tabler/icons-react'
 import { notifications } from '@mantine/notifications'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
@@ -120,28 +121,29 @@ export default function KitchenPage() {
     }
   }, [])
 
-  const completeOrder = async (orderId: string) => {
+  const markOrderReady = async (orderId: string) => {
     try {
       const supabase = createClient()
       const { error } = await supabase
         .from('orders')
-        .update({ status: 'completed' })
+        .update({ status: 'ready' })
         .eq('id', orderId)
 
       if (error) throw error
 
       notifications.show({
         title: 'Başarılı',
-        message: 'Sipariş tamamlandı',
+        message: 'Sipariş hazır olarak işaretlendi! Garsona bildirildi.',
         color: 'green',
+        icon: <IconBell size="1rem" />,
       })
 
       fetchOrders()
     } catch (error) {
-      console.error('Order complete error:', error)
+      console.error('Order ready error:', error)
       notifications.show({
         title: 'Hata',
-        message: 'Sipariş tamamlanırken hata oluştu',
+        message: 'Sipariş güncellenirken hata oluştu',
         color: 'red',
       })
     }
@@ -181,7 +183,7 @@ export default function KitchenPage() {
               <IconChefHat size="2rem" style={{ marginRight: 8 }} />
               Mutfak Paneli
             </Title>
-            <Text c="dimmed">Aktif siparişleri görüntüleyin</Text>
+            <Text c="dimmed">Hazırlanacak siparişleri görüntüleyin</Text>
           </div>
           <ActionIcon
             variant="outline"
@@ -195,12 +197,12 @@ export default function KitchenPage() {
 
         {orders.length === 0 ? (
           <Alert icon={<IconCheck size="1rem" />} color="green">
-            🎉 Harika! Şu anda aktif sipariş yok.
+            🎉 Harika! Şu anda hazırlanacak sipariş yok.
           </Alert>
         ) : (
           <>
             <Text size="sm" c="dimmed">
-              Toplam {orders.length} aktif sipariş
+              Toplam {orders.length} sipariş hazırlanıyor
             </Text>
 
             <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }}>
@@ -221,15 +223,15 @@ export default function KitchenPage() {
                           {getOrderAge(order.created_at)}
                         </Text>
                       </div>
-                      <Badge color="blue" variant="filled">
-                        Aktif
+                      <Badge color="orange" variant="filled">
+                        Hazırlanıyor
                       </Badge>
                     </Group>
 
                     <Divider />
 
                     {/* Sipariş Ürünleri */}
-                    <ScrollArea h={150}>
+                    <ScrollArea h={200}>
                       <Stack gap="xs">
                         {order.order_items.map((item) => (
                           <Group key={item.id} justify="space-between">
@@ -240,6 +242,11 @@ export default function KitchenPage() {
                               <Text size="xs" c="dimmed">
                                 {item.quantity} adet × ₺{item.unit_price.toFixed(2)}
                               </Text>
+                              {item.notes && (
+                                <Text size="xs" c="blue" style={{ fontStyle: 'italic' }}>
+                                  Not: {item.notes}
+                                </Text>
+                              )}
                             </div>
                             <Text size="sm" fw={600} c="green">
                               ₺{(item.quantity * item.unit_price).toFixed(2)}
@@ -256,25 +263,26 @@ export default function KitchenPage() {
                       <Group gap="xs">
                         <IconCurrencyLira size="1rem" />
                         <Text fw={700} size="lg" c="green">
-                          {order.total_amount.toFixed(2)}
+                          ₺{order.total_amount.toFixed(2)}
                         </Text>
                       </Group>
                       
                       <Button
                         size="sm"
                         color="green"
-                        onClick={() => completeOrder(order.id)}
+                        leftSection={<IconBell size="0.9rem" />}
+                        onClick={() => markOrderReady(order.id)}
                       >
-                        Tamamla
+                        Hazır
                       </Button>
                     </Group>
 
-                    {/* Notlar */}
+                    {/* Sipariş Notları */}
                     {order.notes && (
                       <>
                         <Divider />
                         <Text size="xs" c="dimmed" style={{ fontStyle: 'italic' }}>
-                          Not: {order.notes}
+                          Sipariş Notu: {order.notes}
                         </Text>
                       </>
                     )}

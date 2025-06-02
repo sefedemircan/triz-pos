@@ -125,7 +125,7 @@ export interface Database {
           id: string
           table_id: string
           user_id: string
-          status: 'active' | 'completed' | 'cancelled'
+          status: 'active' | 'ready' | 'completed' | 'cancelled'
           total_amount: number
           payment_method: 'cash' | 'card' | 'pending'
           notes: string | null
@@ -136,7 +136,7 @@ export interface Database {
           id?: string
           table_id: string
           user_id: string
-          status?: 'active' | 'completed' | 'cancelled'
+          status?: 'active' | 'ready' | 'completed' | 'cancelled'
           total_amount?: number
           payment_method?: 'cash' | 'card' | 'pending'
           notes?: string | null
@@ -147,7 +147,7 @@ export interface Database {
           id?: string
           table_id?: string
           user_id?: string
-          status?: 'active' | 'completed' | 'cancelled'
+          status?: 'active' | 'ready' | 'completed' | 'cancelled'
           total_amount?: number
           payment_method?: 'cash' | 'card' | 'pending'
           notes?: string | null

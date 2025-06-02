@@ -155,28 +155,29 @@ export default function MutfakDashboardPage() {
     }
   }, [])
 
-  const completeOrder = async (orderId: string) => {
+  const markOrderReady = async (orderId: string) => {
     try {
       const supabase = createClient()
       const { error } = await supabase
         .from('orders')
-        .update({ status: 'completed' })
+        .update({ status: 'ready' })
         .eq('id', orderId)
 
       if (error) throw error
 
       notifications.show({
         title: 'Başarılı',
-        message: 'Sipariş tamamlandı',
+        message: 'Sipariş hazır olarak işaretlendi! Servise bildirildi.',
         color: 'green',
+        icon: <IconCheck size="1rem" />,
       })
 
       fetchOrders()
     } catch (error) {
-      console.error('Order complete error:', error)
+      console.error('Order ready error:', error)
       notifications.show({
         title: 'Hata',
-        message: 'Sipariş tamamlanırken hata oluştu',
+        message: 'Sipariş güncellenirken hata oluştu',
         color: 'red',
       })
     }
@@ -384,9 +385,10 @@ export default function MutfakDashboardPage() {
                         <Button
                           size="sm"
                           color="green"
-                          onClick={() => completeOrder(order.id)}
+                          leftSection={<IconCheck size="0.9rem" />}
+                          onClick={() => markOrderReady(order.id)}
                         >
-                          Tamamla
+                          Hazır
                         </Button>
                       </Group>
 
