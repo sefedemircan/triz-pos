@@ -32,10 +32,12 @@ import {
   IconInfoCircle,
   IconPhoto,
   IconPhotoOff,
+  IconList,
 } from '@tabler/icons-react'
 import { useForm } from '@mantine/form'
 import { notifications } from '@mantine/notifications'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { ProductRecipeModal } from '@/components/modals/ProductRecipeModal'
 import { createClient } from '@/lib/supabase/client'
 import type { Database } from '@/lib/types/database'
 
@@ -51,7 +53,9 @@ export default function ProductsPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [modalOpened, setModalOpened] = useState(false)
+  const [recipeModalOpened, setRecipeModalOpened] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('')
 
@@ -245,6 +249,16 @@ export default function ProductsPage() {
     setModalOpened(true)
   }
 
+  const handleRecipeManagement = (product: ProductWithCategory) => {
+    setSelectedProduct(product)
+    setRecipeModalOpened(true)
+  }
+
+  const handleRecipeModalSuccess = () => {
+    // Reçete değişiklikleri sonrası güncelleme gerekirse
+    console.log('Recipe updated successfully')
+  }
+
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          product.description?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -372,6 +386,14 @@ export default function ProductsPage() {
                       )}
                     </div>
                     <Group gap="xs">
+                      <ActionIcon
+                        variant="light"
+                        color="orange"
+                        onClick={() => handleRecipeManagement(product)}
+                        title="Reçete Yönetimi"
+                      >
+                        <IconList size="1rem" />
+                      </ActionIcon>
                       <ActionIcon
                         variant="light"
                         color="blue"
@@ -517,6 +539,17 @@ export default function ProductsPage() {
             </Stack>
           </form>
         </Modal>
+
+        {/* Reçete Yönetimi Modal */}
+        <ProductRecipeModal
+          opened={recipeModalOpened}
+          onClose={() => {
+            setRecipeModalOpened(false)
+            setSelectedProduct(null)
+          }}
+          onSuccess={handleRecipeModalSuccess}
+          product={selectedProduct}
+        />
       </Stack>
     </DashboardLayout>
   )
