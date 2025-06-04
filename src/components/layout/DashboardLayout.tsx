@@ -51,7 +51,7 @@ const getNavigationByRole = (role: string) => {
         { label: 'Kategoriler', href: '/dashboard/categories', icon: IconCategory },
         { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat },
         { label: 'Mutfak Paneli', href: '/dashboard/kitchen', icon: IconChefHat },
-        { label: 'Personel Yönetimi', href: '/dashboard/staff', icon: IconUsers },
+        { label: 'Kullanıcılar', href: '/dashboard/staff', icon: IconUsers },
         { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings },
       ]
     

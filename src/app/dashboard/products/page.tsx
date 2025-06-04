@@ -62,7 +62,7 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
 
   // Kullanıcının ürün yönetimi yetkisi var mı kontrol et
-  const canManageProducts = user?.role !== 'garson'
+  const canManageProducts = user?.role !== 'garson' && user?.role !== 'mutfak'
 
   const form = useForm({
     initialValues: {
@@ -205,7 +205,7 @@ export default function ProductsPage() {
   }
 
   const handleEdit = (product: Product) => {
-    // Garson kullanıcısı ürün düzenleyemez
+    // Garson ve mutfak kullanıcısı ürün düzenleyemez
     if (!canManageProducts) {
       notifications.show({
         title: 'Yetki Hatası',
@@ -228,7 +228,7 @@ export default function ProductsPage() {
   }
 
   const handleDelete = async (product: Product) => {
-    // Garson kullanıcısı ürün silemez
+    // Garson ve mutfak kullanıcısı ürün silemez
     if (!canManageProducts) {
       notifications.show({
         title: 'Yetki Hatası',
@@ -269,7 +269,7 @@ export default function ProductsPage() {
   }
 
   const handleNewProduct = () => {
-    // Garson kullanıcısı yeni ürün ekleyemez
+    // Garson ve mutfak kullanıcısı yeni ürün ekleyemez
     if (!canManageProducts) {
       notifications.show({
         title: 'Yetki Hatası',
@@ -285,7 +285,7 @@ export default function ProductsPage() {
   }
 
   const handleRecipeManagement = (product: ProductWithCategory) => {
-    // Garson kullanıcısı reçete yönetemez
+    // Garson ve mutfak kullanıcısı reçete yönetemez
     if (!canManageProducts) {
       notifications.show({
         title: 'Yetki Hatası',

@@ -292,14 +292,14 @@ export default function LoginPage() {
                         Giriş Yap
                       </Button>
                       
-                      <Button 
+                      {/* <Button 
                         variant="outline" 
                         color="red"
                         onClick={clearSession}
                         loading={clearing}
                       >
                         Session Temizle
-                      </Button>
+                      </Button> */}
                     </Group>
                   </Stack>
                 </form>
@@ -366,15 +366,6 @@ export default function LoginPage() {
                 </Alert>
               </Tabs.Panel>
             </Tabs>
-
-            <Stack gap="xs">
-              <Text size="sm" ta="center" c="dimmed">
-                Bu sistem sadece kayıtlı personel için kullanılabilir.
-              </Text>
-              <Text size="xs" ta="center" c="dimmed">
-                Test hesapları: admin@test.com / garson@test.com (şifre: 123456)
-              </Text>
-            </Stack>
           </Stack>
         </Paper>
       </Center>
