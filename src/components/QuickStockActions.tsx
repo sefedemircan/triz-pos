@@ -245,7 +245,7 @@ export function QuickStockActions({ item, onSuccess }: QuickStockActionsProps) {
               min={0}
               step={0.001}
               required
-              icon={config.icon}
+              leftSection={config.icon}
               {...form.getInputProps('quantity')}
             />
 

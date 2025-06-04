@@ -64,7 +64,7 @@ export default function EmergencyPage() {
             
             <Text>
               Eğer sayfayı yeniledikten sonra kullanıcı bilgileri gözükmüyorsa 
-              veya sürekli loading'de kalıyorsa aşağıdaki butonları kullanın:
+              
             </Text>
 
             <Stack gap="sm">
@@ -89,10 +89,10 @@ export default function EmergencyPage() {
             <Paper p="md" bg="gray.1">
               <Title order={4} mb="sm">Bu işlem şunları yapar:</Title>
               <ul>
-                <li>Supabase session'ını temizler</li>
-                <li>Browser localStorage'ı temizler</li>
-                <li>Browser sessionStorage'ı temizler</li>
-                <li>Cookies'leri temizler</li>
+                <li>Supabase session temizler</li>
+                <li>Browser localStorage temizler</li>
+                <li>Browser sessionStorage temizler</li>
+                <li>Cookies temizler</li>
                 <li>Login sayfasına yönlendirir</li>
               </ul>
             </Paper>

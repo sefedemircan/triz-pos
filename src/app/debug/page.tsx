@@ -170,7 +170,7 @@ export default function DebugPage() {
         <Paper p="md" withBorder>
           <Title order={3} mb="md">Session Bilgileri</Title>
           <Button onClick={checkSession} mb="md">
-            Session'ı Kontrol Et
+            Session Kontrol Et
           </Button>
           {sessionData && (
             <JsonInput
