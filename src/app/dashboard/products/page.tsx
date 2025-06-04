@@ -39,6 +39,7 @@ import { notifications } from '@mantine/notifications'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { ProductRecipeModal } from '@/components/modals/ProductRecipeModal'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/components/providers/AuthProvider'
 import type { Database } from '@/lib/types/database'
 
 type Product = Database['public']['Tables']['products']['Row']
@@ -49,6 +50,7 @@ interface ProductWithCategory extends Product {
 }
 
 export default function ProductsPage() {
+  const { user } = useAuth()
   const [products, setProducts] = useState<ProductWithCategory[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
@@ -58,6 +60,9 @@ export default function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductWithCategory | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('')
+
+  // Kullanıcının ürün yönetimi yetkisi var mı kontrol et
+  const canManageProducts = user?.role !== 'garson'
 
   const form = useForm({
     initialValues: {
@@ -200,6 +205,16 @@ export default function ProductsPage() {
   }
 
   const handleEdit = (product: Product) => {
+    // Garson kullanıcısı ürün düzenleyemez
+    if (!canManageProducts) {
+      notifications.show({
+        title: 'Yetki Hatası',
+        message: 'Ürün düzenleme yetkiniz bulunmamaktadır',
+        color: 'red',
+      })
+      return
+    }
+
     setEditingProduct(product)
     form.setValues({
       name: product.name,
@@ -213,6 +228,16 @@ export default function ProductsPage() {
   }
 
   const handleDelete = async (product: Product) => {
+    // Garson kullanıcısı ürün silemez
+    if (!canManageProducts) {
+      notifications.show({
+        title: 'Yetki Hatası',
+        message: 'Ürün silme yetkiniz bulunmamaktadır',
+        color: 'red',
+      })
+      return
+    }
+
     if (!confirm(`"${product.name}" ürününü silmek istediğinizden emin misiniz?`)) {
       return
     }
@@ -244,12 +269,32 @@ export default function ProductsPage() {
   }
 
   const handleNewProduct = () => {
+    // Garson kullanıcısı yeni ürün ekleyemez
+    if (!canManageProducts) {
+      notifications.show({
+        title: 'Yetki Hatası',
+        message: 'Yeni ürün ekleme yetkiniz bulunmamaktadır',
+        color: 'red',
+      })
+      return
+    }
+
     setEditingProduct(null)
     form.reset()
     setModalOpened(true)
   }
 
   const handleRecipeManagement = (product: ProductWithCategory) => {
+    // Garson kullanıcısı reçete yönetemez
+    if (!canManageProducts) {
+      notifications.show({
+        title: 'Yetki Hatası',
+        message: 'Reçete yönetimi yetkiniz bulunmamaktadır',
+        color: 'red',
+      })
+      return
+    }
+
     setSelectedProduct(product)
     setRecipeModalOpened(true)
   }
@@ -301,14 +346,18 @@ export default function ProductsPage() {
         <Group justify="space-between">
           <div>
             <Title order={1}>Ürünler</Title>
-            <Text c="dimmed">Menü ürünlerini yönetin</Text>
+            <Text c="dimmed">
+              {canManageProducts ? 'Menü ürünlerini yönetin' : 'Menü ürünlerini görüntüleyin'}
+            </Text>
           </div>
-          <Button
-            leftSection={<IconPlus size="1rem" />}
-            onClick={handleNewProduct}
-          >
-            Yeni Ürün
-          </Button>
+          {canManageProducts && (
+            <Button
+              leftSection={<IconPlus size="1rem" />}
+              onClick={handleNewProduct}
+            >
+              Yeni Ürün
+            </Button>
+          )}
         </Group>
 
         {/* Filtreler */}
@@ -386,28 +435,32 @@ export default function ProductsPage() {
                       )}
                     </div>
                     <Group gap="xs">
-                      <ActionIcon
-                        variant="light"
-                        color="orange"
-                        onClick={() => handleRecipeManagement(product)}
-                        title="Reçete Yönetimi"
-                      >
-                        <IconList size="1rem" />
-                      </ActionIcon>
-                      <ActionIcon
-                        variant="light"
-                        color="blue"
-                        onClick={() => handleEdit(product)}
-                      >
-                        <IconEdit size="1rem" />
-                      </ActionIcon>
-                      <ActionIcon
-                        variant="light"
-                        color="red"
-                        onClick={() => handleDelete(product)}
-                      >
-                        <IconTrash size="1rem" />
-                      </ActionIcon>
+                      {canManageProducts && (
+                        <>
+                          <ActionIcon
+                            variant="light"
+                            color="orange"
+                            onClick={() => handleRecipeManagement(product)}
+                            title="Reçete Yönetimi"
+                          >
+                            <IconList size="1rem" />
+                          </ActionIcon>
+                          <ActionIcon
+                            variant="light"
+                            color="blue"
+                            onClick={() => handleEdit(product)}
+                          >
+                            <IconEdit size="1rem" />
+                          </ActionIcon>
+                          <ActionIcon
+                            variant="light"
+                            color="red"
+                            onClick={() => handleDelete(product)}
+                          >
+                            <IconTrash size="1rem" />
+                          </ActionIcon>
+                        </>
+                      )}
                     </Group>
                   </Group>
 
