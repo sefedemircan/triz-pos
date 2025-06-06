@@ -289,7 +289,7 @@ export default function NewOrderPage() {
 
         <Group align="flex-start" gap="md">
           {/* Sol Panel - Ürünler */}
-          <Card withBorder style={{ flex: 2 }}>
+          <Card style={{ flex: 2 }}>
             <Stack gap="md">
               <Group justify="space-between">
                 <Title order={3}>Ürünler</Title>
@@ -307,7 +307,27 @@ export default function NewOrderPage() {
 
               <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }}>
                 {filteredProducts.map((product) => (
-                  <Card key={product.id} withBorder p="sm">
+                  <Card key={product.id} withBorder
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    borderRadius: '12px',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                      borderRadius: '16px',
+                      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                    }
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.05)'
+                    e.currentTarget.style.borderRadius = '16px'
+                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'
+                    e.currentTarget.style.borderRadius = '12px'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }} p="sm">
                     {/* Ürün Görseli */}
                     {product.image_url ? (
                       <Card.Section>

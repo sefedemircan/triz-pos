@@ -157,7 +157,27 @@ export default function GarsonDashboardPage() {
 
         {/* Özet Kartlar */}
         <SimpleGrid cols={{ base: 2, sm: 4 }}>
-          <Card withBorder>
+          <Card withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
             <Group justify="space-between">
               <div>
                 <Text size="sm" c="dimmed" fw={700}>Boş Masalar</Text>
@@ -167,7 +187,27 @@ export default function GarsonDashboardPage() {
             </Group>
           </Card>
 
-          <Card withBorder>
+          <Card withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
             <Group justify="space-between">
               <div>
                 <Text size="sm" c="dimmed" fw={700}>Dolu Masalar</Text>
@@ -177,7 +217,27 @@ export default function GarsonDashboardPage() {
             </Group>
           </Card>
 
-          <Card withBorder>
+          <Card withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
             <Group justify="space-between">
               <div>
                 <Text size="sm" c="dimmed" fw={700}>Rezerve</Text>
@@ -187,7 +247,27 @@ export default function GarsonDashboardPage() {
             </Group>
           </Card>
 
-          <Card withBorder>
+          <Card withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}>
             <Group justify="space-between">
               <div>
                 <Text size="sm" c="dimmed" fw={700}>Aktif Sipariş</Text>
@@ -199,7 +279,7 @@ export default function GarsonDashboardPage() {
         </SimpleGrid>
 
         {/* Hızlı Aksiyonlar */}
-        <Card withBorder>
+        <Card >
           <Title order={3} mb="md">Hızlı İşlemler</Title>
           <Group>
             <Button
@@ -227,13 +307,33 @@ export default function GarsonDashboardPage() {
         {/* Masa Durumu */}
         <Grid>
           <Grid.Col span={12}>
-            <Card withBorder>
+            <Card >
               <Title order={3} mb="md">Masa Durumu</Title>
               <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 6 }}>
                 {tables.map((table) => {
                   const tableStatus = getTableStatus(table)
                   return (
-                    <Card key={table.id} withBorder p="sm">
+                    <Card key={table.id} withBorder
+                    style={{
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      borderRadius: '12px',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        borderRadius: '16px',
+                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                      }
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)'
+                      e.currentTarget.style.borderRadius = '16px'
+                      e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)'
+                      e.currentTarget.style.borderRadius = '12px'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }} p="sm">
                       <Stack gap="xs" align="center">
                         <Group gap="xs">
                           <IconTable size="1.2rem" />
