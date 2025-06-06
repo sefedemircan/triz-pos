@@ -389,7 +389,25 @@ export default function AdminStockPage() {
         {/* İstatistik Kartları */}
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
           {statCards.map((stat) => (
-            <Card key={stat.title} withBorder>
+            <Card 
+              key={stat.title} 
+              withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed" fw={700}>

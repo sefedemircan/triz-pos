@@ -382,7 +382,30 @@ export default function AdminDashboardPage() {
         {/* İstatistik Kartları */}
         <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
           {statCards.map((stat) => (
-            <Card key={stat.title} withBorder>
+            <Card 
+              key={stat.title} 
+              withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed" fw={700}>
@@ -424,7 +447,26 @@ export default function AdminDashboardPage() {
               const statusText = getTableStatusText(table)
               
               return (
-                <Card key={table.id} withBorder p="sm">
+                <Card 
+                  key={table.id} 
+                  withBorder 
+                  p="sm"
+                  style={{
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    borderRadius: '10px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'scale(1.03)'
+                    e.currentTarget.style.borderRadius = '14px'
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.12)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'scale(1)'
+                    e.currentTarget.style.borderRadius = '10px'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                >
                   <Stack gap="xs" align="center">
                     <Group gap="xs">
                       <IconTable size="1.2rem" />
@@ -488,7 +530,24 @@ export default function AdminDashboardPage() {
         {/* Performans Özeti */}
         <Grid>
           <Grid.Col span={{ base: 12, md: 6 }}>
-            <Card withBorder>
+            <Card 
+              withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.12)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               <Title order={3} mb="md">Masa Doluluk Oranı</Title>
               <Stack gap="xs">
                 <Group justify="space-between">
@@ -509,7 +568,24 @@ export default function AdminDashboardPage() {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, md: 6 }}>
-            <Card withBorder>
+            <Card 
+              withBorder
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.02)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.12)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               <Title order={3} mb="md">Sipariş Durumu</Title>
               <Stack gap="xs">
                 <Group justify="space-between">
@@ -544,7 +620,22 @@ export default function AdminDashboardPage() {
               size="lg"
               leftSection={<IconClipboardList size="1.2rem" />}
               onClick={() => router.push('/dashboard/admin/orders')}
-              style={{ height: 'auto', padding: '1rem' }}
+              style={{ 
+                height: 'auto', 
+                padding: '1rem',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               <Stack gap="xs" align="center">
                 <Text fw={600}>Sipariş Yönetimi</Text>
@@ -557,7 +648,22 @@ export default function AdminDashboardPage() {
               size="lg"
               leftSection={<IconChefHat size="1.2rem" />}
               onClick={() => router.push('/dashboard/products')}
-              style={{ height: 'auto', padding: '1rem' }}
+              style={{ 
+                height: 'auto', 
+                padding: '1rem',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               <Stack gap="xs" align="center">
                 <Text fw={600}>Ürün Yönetimi</Text>
@@ -570,7 +676,22 @@ export default function AdminDashboardPage() {
               size="lg"
               leftSection={<IconUserCog size="1.2rem" />}
               onClick={() => router.push('/dashboard/staff')}
-              style={{ height: 'auto', padding: '1rem' }}
+              style={{ 
+                height: 'auto', 
+                padding: '1rem',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               <Stack gap="xs" align="center">
                 <Text fw={600}>Personel</Text>
@@ -583,7 +704,22 @@ export default function AdminDashboardPage() {
               size="lg"
               leftSection={<IconTable size="1.2rem" />}
               onClick={() => router.push('/dashboard/tables')}
-              style={{ height: 'auto', padding: '1rem' }}
+              style={{ 
+                height: 'auto', 
+                padding: '1rem',
+                transition: 'all 0.3s ease',
+                borderRadius: '12px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'scale(1.05)'
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'scale(1)'
+                e.currentTarget.style.borderRadius = '12px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               <Stack gap="xs" align="center">
                 <Text fw={600}>Masa Yönetimi</Text>
