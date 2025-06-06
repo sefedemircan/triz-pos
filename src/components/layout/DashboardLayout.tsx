@@ -257,6 +257,25 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               fullWidth
               mb="xs"
               onClick={() => router.push(item.href)}
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                borderRadius: '16px',
+                '&:hover': {
+                  borderRadius: '16px',
+                  boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)'
+                }
+              }}
+              onMouseEnter={(e) => {
+                
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)'
+              }}
+              onMouseLeave={(e) => {
+                
+                e.currentTarget.style.borderRadius = '16px'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
             >
               {item.label}
             </Button>
