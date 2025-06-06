@@ -365,10 +365,9 @@ export default function AdminDashboardPage() {
         <Group justify="space-between">
           <div>
             <Title order={1}>
-              <IconShield size="2rem" style={{ marginRight: 8 }} />
               Admin Dashboard
             </Title>
-            <Text c="dimmed">Hoş geldiniz, {user?.full_name} - Sistem Yöneticisi</Text>
+            <Text c="dimmed">Hoş geldiniz, {user?.full_name}</Text>
           </div>
           <ActionIcon
             variant="outline"
