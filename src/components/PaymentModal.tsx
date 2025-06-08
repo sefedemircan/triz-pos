@@ -16,6 +16,8 @@ import {
   Alert,
   Title,
   Badge,
+  ThemeIcon,
+  Box,
 } from '@mantine/core'
 import {
   IconCurrencyLira,
@@ -26,6 +28,8 @@ import {
   IconCash,
   IconCreditCard,
   IconCalculator,
+  IconAlertCircle,
+  IconReceipt,
 } from '@tabler/icons-react'
 import type { Database } from '@/lib/types/database'
 
@@ -109,116 +113,207 @@ export function PaymentModal({ opened, onClose, order, onComplete, loading = fal
       opened={opened}
       onClose={onClose}
       title={
-        <Group gap="xs">
-          <IconCurrencyLira size="1.5rem" />
-          <Text fw={600} size="lg">Ödeme Al</Text>
+        <Group gap="sm" className="animate-slide-in-right">
+          <ThemeIcon size="xl" radius="md" color="orange" className="cafe-gradient-bg">
+            <IconCurrencyLira size="1.5rem" />
+          </ThemeIcon>
+          <Box>
+            <Text fw={700} size="xl" c="var(--foreground)">Ödeme Al</Text>
+            <Text size="sm" c="var(--foreground-muted)">Sipariş #{order.id.slice(-8)}</Text>
+          </Box>
         </Group>
       }
       size="lg"
       centered
+      radius="lg"
+      className="animate-fade-in"
+      styles={{
+        content: {
+          background: 'var(--card-bg)',
+          border: '2px solid var(--card-border)',
+        },
+        header: {
+          background: 'var(--gradient-light)',
+          borderBottom: '1px solid var(--card-border)',
+        },
+      }}
     >
-      <Stack gap="md">
+      <Stack gap="lg">
         {/* Sipariş Özeti */}
-        <Card withBorder>
-          <Grid>
+        <Card className="cafe-card glass-effect">
+          <Title order={4} mb="md" c="var(--cafe-primary)">
+            <Group gap="xs">
+              <IconReceipt size="1.2rem" />
+              <Text>Sipariş Özeti</Text>
+            </Group>
+          </Title>
+          <Grid gutter="md">
             <Grid.Col span={6}>
-              <Group gap="xs">
-                <IconTable size="1rem" />
-                <div>
-                  <Text size="sm" c="dimmed">Masa</Text>
-                  <Text fw={500}>Masa {order.tables?.table_number}</Text>
-                </div>
+              <Group gap="sm">
+                <ThemeIcon size="md" color="orange" variant="light">
+                  <IconTable size="1rem" />
+                </ThemeIcon>
+                <Box>
+                  <Text size="sm" c="var(--foreground-muted)" fw={500}>Masa</Text>
+                  <Text fw={600} c="var(--foreground)">Masa {order.tables?.table_number}</Text>
+                </Box>
               </Group>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Group gap="xs">
-                <IconUser size="1rem" />
-                <div>
-                  <Text size="sm" c="dimmed">Garson</Text>
-                  <Text fw={500}>{order.users?.full_name}</Text>
-                </div>
+              <Group gap="sm">
+                <ThemeIcon size="md" color="orange" variant="light">
+                  <IconUser size="1rem" />
+                </ThemeIcon>
+                <Box>
+                  <Text size="sm" c="var(--foreground-muted)" fw={500}>Garson</Text>
+                  <Text fw={600} c="var(--foreground)">{order.users?.full_name}</Text>
+                </Box>
               </Group>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Group gap="xs">
-                <IconClock size="1rem" />
-                <div>
-                  <Text size="sm" c="dimmed">Sipariş Zamanı</Text>
-                  <Text fw={500}>{getOrderAge()}</Text>
-                </div>
+              <Group gap="sm">
+                <ThemeIcon size="md" color="orange" variant="light">
+                  <IconClock size="1rem" />
+                </ThemeIcon>
+                <Box>
+                  <Text size="sm" c="var(--foreground-muted)" fw={500}>Sipariş Zamanı</Text>
+                  <Text fw={600} c="var(--foreground)">{getOrderAge()}</Text>
+                </Box>
               </Group>
             </Grid.Col>
             <Grid.Col span={6}>
-              <div>
-                <Text size="sm" c="dimmed">Sipariş Tarihi</Text>
-                <Text fw={500}>{formatDate(order.created_at)}</Text>
-              </div>
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <Text size="sm" c="dimmed">Durum</Text>
-              <Badge color={order.status === 'active' ? 'orange' : order.status === 'ready' ? 'blue' : 'green'}>
-                {order.status === 'active' ? 'Hazırlanıyor' : 
-                 order.status === 'ready' ? 'Hazır' : 
-                 order.status === 'completed' ? 'Tamamlandı' : 'İptal'}
-              </Badge>
+              <Box>
+                <Text size="sm" c="var(--foreground-muted)" fw={500}>Durum</Text>
+                <Badge 
+                  color={order.status === 'active' ? 'orange' : order.status === 'ready' ? 'blue' : 'green'}
+                  variant="light"
+                  size="md"
+                  className="hover-glow"
+                >
+                  {order.status === 'active' ? 'Hazırlanıyor' : 
+                   order.status === 'ready' ? 'Hazır' : 
+                   order.status === 'completed' ? 'Tamamlandı' : 'İptal'}
+                </Badge>
+              </Box>
             </Grid.Col>
           </Grid>
         </Card>
 
         {/* Sipariş Ürünleri */}
-        <Card withBorder>
-          <Title order={4} mb="md">Sipariş Detayları</Title>
-          <Stack gap="xs">
-            {order.order_items.map((item) => (
-              <Group key={item.id} justify="space-between" p="xs">
-                <div>
-                  <Text fw={500} size="sm">{item.products?.name || 'Bilinmeyen Ürün'}</Text>
-                  <Text size="xs" c="dimmed">
-                    {item.quantity} adet × ₺{item.unit_price.toFixed(2)}
-                  </Text>
-                </div>
-                <Text fw={600} c="green">
-                  ₺{item.total_price.toFixed(2)}
-                </Text>
-              </Group>
+        <Card className="cafe-card">
+          <Title order={4} mb="md" c="var(--cafe-primary)">
+            <Group gap="xs">
+              <IconReceipt size="1.2rem" />
+              <Text>Sipariş Detayları</Text>
+            </Group>
+          </Title>
+          <Stack gap="sm">
+            {order.order_items.map((item, index) => (
+              <Box
+                key={item.id}
+                p="md"
+                className="hover-lift"
+                style={{
+                  background: 'var(--background-secondary)',
+                  borderRadius: '12px',
+                  border: '1px solid var(--card-border)',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                <Group justify="space-between" align="center">
+                  <Box>
+                    <Text fw={600} size="md" c="var(--foreground)">
+                      {item.products?.name || 'Bilinmeyen Ürün'}
+                    </Text>
+                    <Text size="sm" c="var(--foreground-muted)">
+                      {item.quantity} adet × ₺{item.unit_price.toFixed(2)}
+                    </Text>
+                  </Box>
+                  <Box className="cafe-gradient-light" p="xs" style={{ borderRadius: '8px' }}>
+                    <Text fw={700} c="var(--cafe-primary)" size="lg">
+                      ₺{item.total_price.toFixed(2)}
+                    </Text>
+                  </Box>
+                </Group>
+              </Box>
             ))}
           </Stack>
           
-          <Divider my="md" />
+          <Divider my="lg" />
           
-          <Group justify="space-between" p="md" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-            <Text fw={700} size="xl">TOPLAM:</Text>
-            <Text fw={700} size="xl" c="green">
-              ₺{totalAmount.toFixed(2)}
-            </Text>
-          </Group>
+          <Box
+            p="xl"
+            className="cafe-gradient-bg"
+            style={{ 
+              borderRadius: '16px',
+              boxShadow: 'var(--card-shadow-hover)',
+            }}
+          >
+            <Group justify="space-between" align="center">
+              <Text fw={700} size="xl" c="white">TOPLAM TUTAR:</Text>
+              <Text fw={900} size="2xl" c="white" className="animate-pulse">
+                ₺{totalAmount.toFixed(2)}
+              </Text>
+            </Group>
+          </Box>
         </Card>
 
         {/* Ödeme Yöntemi */}
-        <Card withBorder>
-          <Title order={4} mb="md">Ödeme Yöntemi</Title>
+        <Card className="cafe-card">
+          <Title order={4} mb="md" c="var(--cafe-primary)">
+            <Group gap="xs">
+              <IconCreditCard size="1.2rem" />
+              <Text>Ödeme Yöntemi</Text>
+            </Group>
+          </Title>
           <Radio.Group
             value={paymentMethod}
             onChange={(value) => setPaymentMethod(value as 'cash' | 'card')}
           >
-            <Stack gap="xs">
+            <Stack gap="md">
               <Radio
                 value="cash"
+                size="md"
                 label={
-                  <Group gap="xs">
-                    <IconCash size="1rem" />
-                    <Text>Nakit</Text>
+                  <Group gap="sm" p="sm">
+                    <ThemeIcon size="lg" color="green" variant="light">
+                      <IconCash size="1.2rem" />
+                    </ThemeIcon>
+                    <Box>
+                      <Text fw={600} size="md">Nakit Ödeme</Text>
+                      <Text size="sm" c="var(--foreground-muted)">Müşteriden nakit para alın</Text>
+                    </Box>
                   </Group>
                 }
+                className="hover-lift"
+                style={{
+                  padding: '12px',
+                  border: '2px solid var(--card-border)',
+                  borderRadius: '12px',
+                  background: paymentMethod === 'cash' ? 'var(--background-tertiary)' : 'transparent',
+                }}
               />
               <Radio
                 value="card"
+                size="md"
                 label={
-                  <Group gap="xs">
-                    <IconCreditCard size="1rem" />
-                    <Text>Kredi/Banka Kartı</Text>
+                  <Group gap="sm" p="sm">
+                    <ThemeIcon size="lg" color="blue" variant="light">
+                      <IconCreditCard size="1.2rem" />
+                    </ThemeIcon>
+                    <Box>
+                      <Text fw={600} size="md">Kredi/Banka Kartı</Text>
+                      <Text size="sm" c="var(--foreground-muted)">POS cihazı ile ödeme</Text>
+                    </Box>
                   </Group>
                 }
+                className="hover-lift"
+                style={{
+                  padding: '12px',
+                  border: '2px solid var(--card-border)',
+                  borderRadius: '12px',
+                  background: paymentMethod === 'card' ? 'var(--background-tertiary)' : 'transparent',
+                }}
               />
             </Stack>
           </Radio.Group>
@@ -226,68 +321,99 @@ export function PaymentModal({ opened, onClose, order, onComplete, loading = fal
 
         {/* Nakit Ödeme Detayları */}
         {paymentMethod === 'cash' && (
-          <Card withBorder>
-            <Title order={4} mb="md">
+          <Card className="cafe-card animate-slide-in-up">
+            <Title order={4} mb="md" c="var(--cafe-primary)">
               <Group gap="xs">
-                <IconCalculator size="1rem" />
+                <IconCalculator size="1.2rem" />
                 <Text>Nakit Hesaplama</Text>
               </Group>
             </Title>
             
-            <Stack gap="md">
+            <Stack gap="lg">
               <NumberInput
-                label="Alınan Tutar"
+                label={
+                  <Text fw={600} size="md" c="var(--foreground)">
+                    Alınan Tutar
+                  </Text>
+                }
                 placeholder="Müşteriden alınan para miktarı"
                 value={receivedAmount}
                 onChange={(value) => setReceivedAmount(Number(value) || 0)}
                 min={0}
                 step={0.01}
                 decimalScale={2}
-                leftSection={<IconCurrencyLira size="1rem" />}
-                size="md"
+                leftSection={
+                  <ThemeIcon size="sm" color="green" variant="light">
+                    <IconCurrencyLira size="0.8rem" />
+                  </ThemeIcon>
+                }
+                size="lg"
+                radius="md"
+                style={{
+                  '--input-bg': 'var(--card-bg)',
+                  '--input-border': 'var(--card-border)',
+                }}
               />
 
               {/* Hızlı Tutar Butonları */}
-              <div>
-                <Text size="sm" mb="xs" c="dimmed">Hızlı Tutar Seçimi</Text>
-                <Group gap="xs">
+              <Box>
+                <Text size="md" mb="sm" c="var(--foreground)" fw={600}>
+                  Hızlı Tutar Seçimi
+                </Text>
+                <Group gap="sm">
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="md"
                     onClick={() => handleQuickAmount(totalAmount)}
+                    className="cafe-button-secondary hover-scale"
                   >
                     Tam Para
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="md"
                     onClick={() => handleQuickAmount(Math.ceil(totalAmount / 5) * 5)}
+                    className="cafe-button-secondary hover-scale"
                   >
-                    5₺&apos;e Yuvarla
+                                         5₺&apos;e Yuvarla
                   </Button>
                   <Button
                     variant="outline"
-                    size="sm"
+                    size="md"
                     onClick={() => handleQuickAmount(Math.ceil(totalAmount / 10) * 10)}
+                    className="cafe-button-secondary hover-scale"
                   >
-                    10₺&apos;e Yuvarla
+                                         10₺&apos;e Yuvarla
                   </Button>
                 </Group>
-              </div>
+              </Box>
 
               {/* Para Üstü Hesaplama */}
               {receivedAmount > 0 && (
                 <Alert 
                   color={receivedAmount >= totalAmount ? "green" : "red"}
-                  icon={receivedAmount >= totalAmount ? <IconCheck size="1rem" /> : <IconCurrencyLira size="1rem" />}
+                  icon={receivedAmount >= totalAmount ? <IconCheck size="1.2rem" /> : <IconAlertCircle size="1.2rem" />}
+                  radius="md"
+                  className="animate-slide-in-up"
+                  style={{
+                    background: receivedAmount >= totalAmount ? 
+                      'rgba(76, 175, 80, 0.1)' : 
+                      'rgba(244, 67, 54, 0.1)',
+                  }}
                 >
                   {receivedAmount >= totalAmount ? (
-                    <Group justify="space-between">
-                      <Text>Para Üstü:</Text>
-                      <Text fw={700}>₺{changeAmount.toFixed(2)}</Text>
+                    <Group justify="space-between" align="center">
+                      <Text fw={600} size="md">Para Üstü:</Text>
+                      <Box className="cafe-gradient-light" p="sm" style={{ borderRadius: '8px' }}>
+                        <Text fw={700} size="lg" c="var(--cafe-primary)">
+                          ₺{changeAmount.toFixed(2)}
+                        </Text>
+                      </Box>
                     </Group>
                   ) : (
-                    <Text>Yetersiz tutar! Eksik: ₺{(totalAmount - receivedAmount).toFixed(2)}</Text>
+                    <Text fw={600} size="md">
+                      Yetersiz tutar! Eksik: ₺{(totalAmount - receivedAmount).toFixed(2)}
+                    </Text>
                   )}
                 </Alert>
               )}
@@ -296,29 +422,51 @@ export function PaymentModal({ opened, onClose, order, onComplete, loading = fal
         )}
 
         {/* Ödeme Notu */}
-        <Textarea
-          label="Ödeme Notu (Opsiyonel)"
-          placeholder="Ödeme ile ilgili ek bilgiler..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={3}
-        />
+        <Card className="cafe-card">
+          <Textarea
+            label={
+              <Text fw={600} size="md" c="var(--foreground)">
+                Ödeme Notu (Opsiyonel)
+              </Text>
+            }
+            placeholder="Ödeme ile ilgili ek bilgiler..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            radius="md"
+            style={{
+              '--input-bg': 'var(--card-bg)',
+              '--input-border': 'var(--card-border)',
+            }}
+          />
+        </Card>
 
         {/* İşlem Butonları */}
-        <Group justify="space-between" mt="md">
+        <Group justify="space-between" mt="xl">
           <Button
             variant="outline"
+            size="lg"
             onClick={onClose}
             disabled={loading}
+            className="cafe-button-secondary hover-scale"
+            style={{
+              borderColor: 'var(--card-border)',
+              color: 'var(--foreground-muted)',
+            }}
           >
             İptal
           </Button>
           <Button
-            color="green"
+            size="lg"
             onClick={handleComplete}
             disabled={!canComplete || loading}
             loading={loading}
-            leftSection={<IconCheck size="1rem" />}
+            leftSection={<IconCheck size="1.2rem" />}
+            className="cafe-button-primary hover-lift"
+            style={{
+              background: 'var(--gradient-primary)',
+              minWidth: '180px',
+            }}
           >
             Ödemeyi Tamamla
           </Button>

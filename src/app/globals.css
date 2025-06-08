@@ -10,16 +10,74 @@ body {
   box-sizing: border-box;
 }
 
+/* Hydration Safe Theme Variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light Mode - Turuncu Cafe POS Tema Renkleri */
+  --cafe-primary: #FF6B35;
+  --cafe-primary-light: #FFB27D;
+  --cafe-primary-dark: #E55A2B;
+  --cafe-secondary: #FF8C42;
+  --cafe-accent: #FF9A7A;
+  --cafe-warm: #FFBA9F;
+  --cafe-cream: #FFF4F0;
+  --cafe-peach: #FFE8E0;
+  
+  /* Light Mode Arka planları */
+  --background: #FEFEFE;
+  --background-secondary: #FFF9F7;
+  --background-tertiary: #FFF4F0;
+  --background-hover: #FFE8E0;
+  --foreground: #2C3E50;
+  --foreground-muted: #6C757D;
+  
+  /* Light Mode Card stilleri */
+  --card-bg: #FFFFFF;
+  --card-border: #FFE8E0;
+  --card-shadow: 0 2px 8px rgba(255, 107, 53, 0.1);
+  --card-shadow-hover: 0 8px 25px rgba(255, 107, 53, 0.2);
+  --card-shadow-active: 0 4px 15px rgba(255, 107, 53, 0.25);
+  
+  /* Gradyanlar */
+  --gradient-primary: linear-gradient(135deg, var(--cafe-primary) 0%, var(--cafe-secondary) 100%);
+  --gradient-warm: linear-gradient(135deg, var(--cafe-secondary) 0%, var(--cafe-warm) 100%);
+  --gradient-light: linear-gradient(135deg, var(--cafe-cream) 0%, var(--cafe-peach) 100%);
+  --gradient-sunset: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFB27D 100%);
+  
+  /* Glassmorphism efektleri */
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(255, 107, 53, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Dark Mode - Hydration Safe */
+[data-mantine-color-scheme="dark"] {
+  /* Dark Mode Temel Renkler */
+  --background: #0F0F0F;
+  --background-secondary: #1A1A1A;
+  --background-tertiary: #2D2D2D;
+  --background-hover: #404040;
+  --foreground: #F5F5F5;
+  --foreground-muted: #A0A0A0;
+  
+  /* Dark Mode Card stilleri */
+  --card-bg: #1A1A1A;
+  --card-border: #404040;
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 8px 25px rgba(255, 107, 53, 0.2);
+  --card-shadow-active: 0 4px 15px rgba(255, 107, 53, 0.3);
+  
+  /* Dark Mode Gradyanlar */
+  --gradient-light: linear-gradient(135deg, #2D2D2D 0%, #404040 100%);
+  
+  /* Dark Mode Glassmorphism */
+  --glass-bg: rgba(26, 26, 26, 0.8);
+  --glass-border: rgba(255, 107, 53, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Hydration Warning Suppression */
+html[data-mantine-color-scheme] {
+  transition: none;
 }
 
 html,
@@ -34,6 +92,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
@@ -41,8 +100,263 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+/* Özel scroll bar stilleri */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gradient-primary);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cafe-primary-dark);
+}
+
+/* Temel UI Bileşenleri */
+.cafe-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cafe-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);
+  border-color: var(--cafe-primary);
+}
+
+.cafe-card-active {
+  border-color: var(--cafe-primary);
+  box-shadow: var(--card-shadow-active);
+  background: var(--background-tertiary);
+}
+
+/* Gradient backgrounds */
+.cafe-gradient-bg {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.cafe-gradient-warm {
+  background: var(--gradient-warm);
+  color: white;
+}
+
+.cafe-gradient-light {
+  background: var(--gradient-light);
+  color: var(--foreground);
+}
+
+.cafe-gradient-sunset {
+  background: var(--gradient-sunset);
+  color: white;
+}
+
+/* Glassmorphism efekti */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 16px;
+}
+
+/* Button stilleri */
+.cafe-button-primary {
+  background: var(--gradient-primary);
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: 600;
+}
+
+.cafe-button-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+}
+
+.cafe-button-secondary {
+  background: var(--card-bg);
+  border: 2px solid var(--cafe-primary);
+  border-radius: 12px;
+  color: var(--cafe-primary);
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.cafe-button-secondary:hover {
+  background: var(--cafe-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+/* Badge stilleri */
+.cafe-badge-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cafe-badge-light {
+  background: var(--card-bg);
+  color: var(--cafe-primary);
+  border: 1px solid var(--cafe-primary);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Loading overlay */
+.cafe-loading-overlay {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+}
+
+/* Theme Toggle Button - Hydration Safe */
+.theme-toggle {
+  transition: all 0.3s ease;
+}
+
+/* Hover efektleri */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+.hover-scale {
+  transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Animasyonlar */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+/* Animation classes */
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--card-border) 25%, var(--background-hover) 50%, var(--card-border) 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+  .cafe-card {
+    border-radius: 12px;
+  }
+  
+  .cafe-button-primary,
+  .cafe-button-secondary {
+    border-radius: 8px;
   }
 }
