@@ -15,16 +15,16 @@ const theme = createTheme({
   primaryColor: 'orange',
   colors: {
     orange: [
-      '#FFF4F0',     // 0 - En açık
-      '#FFE8E0',     // 1
-      '#FFD1C1',     // 2
-      '#FFBA9F',     // 3
-      '#FF9A7A',     // 4
-      '#FF8C42',     // 5
-      '#FF6B35',     // 6 - Ana renk
-      '#E55A2B',     // 7
-      '#CC4B21',     // 8
-      '#B33E18'      // 9 - En koyu
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',
+      '#FFC300',     
+      '#FFC300',    
     ],
   },
   fontFamily: inter.style.fontFamily,

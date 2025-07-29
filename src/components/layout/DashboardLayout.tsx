@@ -9,6 +9,7 @@ import {
   Avatar,
   Menu,
   Badge,
+  Image,
   Burger,
   Center,
   Loader,
@@ -16,6 +17,7 @@ import {
   Box,
   Transition,
   Tooltip,
+  Divider,
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import { useComputedColorScheme, useMantineColorScheme } from '@mantine/core'
@@ -37,6 +39,8 @@ import {
   IconSun,
   IconMoon,
   IconDeviceDesktop,
+  IconDashboard,
+  IconBuilding,
 } from '@tabler/icons-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/components/providers/AuthProvider'
@@ -47,43 +51,43 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-// Rol tabanlı navigasyon menüleri - Turuncu tema
+// Rol tabanlı navigasyon menüleri - Kurumsal tema
 const getNavigationByRole = (role: string) => {
   switch (role) {
     case 'admin':
       return [
-        { label: 'Admin Dashboard', href: '/dashboard/admin', icon: IconShield, color: 'orange' },
-        { label: 'Sipariş Yönetimi', href: '/dashboard/admin/orders', icon: IconClipboardList, color: 'orange' },
-        { label: 'Stok Yönetimi', href: '/dashboard/admin/stock', icon: IconBox, color: 'orange' },
-        { label: 'Masalar', href: '/dashboard/tables', icon: IconTable, color: 'orange' },
-        { label: 'Kategoriler', href: '/dashboard/categories', icon: IconCategory, color: 'orange' },
-        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'orange' },
-        { label: 'Mutfak Paneli', href: '/dashboard/kitchen', icon: IconChefHat, color: 'orange' },
-        { label: 'Kullanıcılar', href: '/dashboard/staff', icon: IconUsers, color: 'orange' },
-        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'orange' },
+        { label: 'Dashboard', href: '/dashboard/admin', icon: IconDashboard, color: 'gray' },
+        { label: 'Sipariş Yönetimi', href: '/dashboard/admin/orders', icon: IconClipboardList, color: 'gray' },
+        { label: 'Stok Yönetimi', href: '/dashboard/admin/stock', icon: IconBox, color: 'gray' },
+        { label: 'Masalar', href: '/dashboard/tables', icon: IconTable, color: 'gray' },
+        { label: 'Kategoriler', href: '/dashboard/categories', icon: IconCategory, color: 'gray' },
+        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'gray' },
+        { label: 'Mutfak Paneli', href: '/dashboard/kitchen', icon: IconChefHat, color: 'gray' },
+        { label: 'Kullanıcılar', href: '/dashboard/staff', icon: IconUsers, color: 'gray' },
+        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'gray' },
       ]
     
     case 'garson':
       return [
-        { label: 'Garson Paneli', href: '/dashboard/garson', icon: IconUser, color: 'orange' },
-        { label: 'Yeni Sipariş', href: '/dashboard/garson/new-order', icon: IconPlus, color: 'orange' },
-        { label: 'Masa Durumu', href: '/dashboard/tables', icon: IconTable, color: 'orange' },
-        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'orange' },
-        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'orange' },
+        { label: 'Garson Paneli', href: '/dashboard/garson', icon: IconUser, color: 'gray' },
+        { label: 'Yeni Sipariş', href: '/dashboard/garson/new-order', icon: IconPlus, color: 'gray' },
+        { label: 'Masa Durumu', href: '/dashboard/tables', icon: IconTable, color: 'gray' },
+        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'gray' },
+        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'gray' },
       ]
     
     case 'mutfak':
       return [
-        { label: 'Mutfak Paneli', href: '/dashboard/mutfak', icon: IconChefHat, color: 'green' },
-        { label: 'Aktif Siparişler', href: '/dashboard/kitchen', icon: IconChefHat, color: 'green' },
-        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'orange' },
-        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'orange' },
+        { label: 'Mutfak Paneli', href: '/dashboard/mutfak', icon: IconChefHat, color: 'gray' },
+        { label: 'Aktif Siparişler', href: '/dashboard/kitchen', icon: IconChefHat, color: 'gray' },
+        { label: 'Ürünler', href: '/dashboard/products', icon: IconChefHat, color: 'gray' },
+        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'gray' },
       ]
     
     default:
       return [
-        { label: 'Dashboard', href: '/dashboard', icon: IconHome, color: 'orange' },
-        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'orange' },
+        { label: 'Dashboard', href: '/dashboard', icon: IconHome, color: 'gray' },
+        { label: 'Ayarlar', href: '/dashboard/settings', icon: IconSettings, color: 'gray' },
       ]
   }
 }
@@ -225,14 +229,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <AppShell
-      header={{ height: 80 }}
-      navbar={{ width: 320, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      header={{ height: 70 }}
+      navbar={{ width: 280, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md"
       style={{
         '--app-shell-background': 'var(--background-secondary)',
       }}
     >
-      <AppShell.Header className="cafe-gradient-bg" style={{ borderBottom: 'none' }}>
+      <AppShell.Header 
+        style={{ 
+          borderBottom: '1px solid var(--border-color)',
+          background: 'var(--background)',
+          height: 70,
+        }}
+      >
         <Group h="100%" px="xl" justify="space-between">
           <Group gap="md">
             <Burger 
@@ -240,25 +250,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               onClick={toggle} 
               hiddenFrom="sm" 
               size="sm" 
-              color="white"
+              color="var(--text-color)"
             />
             <Group gap="sm">
               <Box>
-                <Text fw={700} size="xl" c="orange">Cafe POS</Text>
-                <Text size="sm" c="orange" fw={600}>Modern Kafe Yönetim Sistemi</Text>
+                <Image src="/logo.png" alt="TrizPOS" width={28} height={28} />
               </Box>
             </Group>
             <Badge 
-              size="lg"
-              variant="filled"
-              c={computedColorScheme === 'dark' ? 'white' : 'var(--cafe-primary)'}
+              size="sm"
+              variant="light"
+              color="gray"
               style={{
-                background: 'rgba(205, 201, 201, 0.25)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                backdropFilter: 'blur(10px)',
-                fontWeight: 600,
+                fontWeight: 500,
+                fontSize: '0.75rem',
               }}
-              className="glass-effect"
             >
               {getRoleText(displayUser.role || '')}
             </Badge>
@@ -269,63 +275,58 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Tooltip label={getThemeTooltip()} position="bottom">
               <ActionIcon
                 variant="subtle"
-                c={computedColorScheme === 'dark' ? 'white' : 'var(--cafe-primary)'}
-                size="xl"
+                color="gray"
+                size="md"
                 radius="md"
                 onClick={toggleColorScheme}
-                className="hover-scale theme-toggle"
                 style={{   
                   backgroundColor: 'transparent'
                 }}
               >
-                <ThemeIcon size="1.3rem" />
+                <ThemeIcon size="1.1rem" />
               </ActionIcon>
             </Tooltip>
 
             <Tooltip label="Bildirimler" position="bottom">
               <ActionIcon 
                 variant="subtle" 
-                c={computedColorScheme === 'dark' ? 'white' : 'var(--cafe-primary)'}
-                size="xl" 
+                color="gray"
+                size="md" 
                 radius="md"
-                className="hover-scale"
                 style={{
                   backgroundColor: 'transparent',
                 }}
               >
-                <IconBell size="1.3rem" />
+                <IconBell size="1.1rem" />
               </ActionIcon>
             </Tooltip>
 
-            <Menu shadow="xl" width={250} radius="lg">
+            <Menu shadow="md" width={250} radius="md">
               <Menu.Target>
                 <ActionIcon 
                   variant="subtle" 
-                  c={computedColorScheme === 'dark' ? 'white' : 'var(--cafe-primary)'}
-                  size="xl" 
+                  color="gray"
+                  size="md" 
                   radius="md"
-                  className="hover-scale"
                   style={{
                     backgroundColor: 'transparent',
                   }}
                 >
-                  <Avatar size="md" radius="xl" color="orange">
+                  <Avatar size="sm" radius="md" color="gray">
                     {displayUser.full_name?.charAt(0).toUpperCase() || 'U'}
                   </Avatar>
                 </ActionIcon>
               </Menu.Target>
 
-              <Menu.Dropdown style={{ borderRadius: '16px' }}>
+              <Menu.Dropdown style={{ borderRadius: '8px' }}>
                 <Menu.Label>
                   <Group gap="sm">
-                    <Avatar size="sm" radius="xl" color="orange">
+                    <Avatar size="sm" radius="md" color="gray">
                       {displayUser.full_name?.charAt(0).toUpperCase() || 'U'}
                     </Avatar>
                     <Box>
-                      <Text size="sm" fw={600}>{displayUser.full_name || 'Kullanıcı'}</Text>
-                      <Badge size="xs" variant="light" color="orange">
-                        {getRoleText(displayUser.role || '')}
-                      </Badge>
+                      <Text size="sm" fw={500}>{displayUser.full_name || 'Kullanıcı'}</Text>
+                      <Text size="xs" c="dimmed">{displayUser.email}</Text>
                     </Box>
                   </Group>
                 </Menu.Label>
@@ -358,82 +359,108 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <AppShell.Navbar 
         p="md"
         style={{
-          background: 'var(--card-bg)',
-          borderRight: '2px solid var(--card-border)',
+          background: 'var(--background)',
+          borderRight: '1px solid var(--border-color)',
         }}
       >
-        <Stack gap="xs">
-          <Group mb="lg" p="md" className="cafe-gradient-light" style={{ borderRadius: '12px' }}>
-            <Avatar 
-              size="lg" 
-              radius="md" 
-              color="orange"
-              className="hover-glow"
-            >
-              {displayUser.full_name?.charAt(0).toUpperCase() || 'U'}
-            </Avatar>
-            <Box>
-              <Text fw={600} size="md" c="var(--cafe-primary)">{displayUser.full_name || 'Kullanıcı'}</Text>
-              <Text size="sm" c="var(--cafe-primary-dark)">{getRoleText(displayUser.role || '')} Paneli</Text>
-            </Box>
-          </Group>
-          
-          {navigation.map((item, index) => {
-            const isActive = pathname === item.href
-            return (
-              <Transition
-                key={item.href}
-                mounted={mounted}
-                transition="slide-right"
-                duration={400}
-                timingFunction="ease"
-                exitDuration={200}
+        <Stack gap="md">
+          {/* Kullanıcı Profili - Sade Tasarım */}
+          <Box p="md" style={{ 
+            background: 'var(--card-bg)', 
+            borderRadius: '8px',
+            border: '1px solid var(--border-color)',
+          }}>
+            <Group gap="md">
+              <Avatar 
+                size="md" 
+                radius="md" 
+                color="gray"
+                style={{ border: '2px solid var(--border-color)' }}
               >
-                {(styles) => (
-                  <Tooltip label={item.label} position="right" disabled={opened}>
-                    <Button
-                      variant={isActive ? 'filled' : 'subtle'}
-                      color={item.color}
-                      leftSection={<item.icon size="1.2rem" />}
-                      justify="flex-start"
-                      fullWidth
-                      radius="md"
-                      size="md"
-                      onClick={() => router.push(item.href)}
-                      style={{
-                        ...styles,
-                        animationDelay: `${index * 100}ms`,
-                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                        transform: isActive ? 'translateX(8px)' : 'translateX(0)',
-                        boxShadow: isActive ? 'var(--card-shadow-active)' : 'none',
-                        fontWeight: isActive ? 600 : 500,
-                      }}
-                      className={`animate-slide-in-up ${isActive ? 'cafe-card-active' : 'hover-lift'}`}
-                    >
-                      {item.label}
-                    </Button>
-                  </Tooltip>
-                )}
-              </Transition>
-            )
-          })}
+                {displayUser.full_name?.charAt(0).toUpperCase() || 'U'}
+              </Avatar>
+              <Box style={{ flex: 1 }}>
+                <Text fw={600} size="sm" c="var(--text-color)">
+                  {displayUser.full_name || 'Kullanıcı'}
+                </Text>
+                <Text size="xs" c="dimmed" style={{ marginTop: '2px' }}>
+                  {getRoleText(displayUser.role || '')} • {displayUser.email}
+                </Text>
+              </Box>
+            </Group>
+          </Box>
+
+          <Divider />
+
+          {/* Navigasyon Menüsü - Kurumsal Tasarım */}
+          <Stack gap="xs">
+            {navigation.map((item, index) => {
+              const isActive = pathname === item.href
+              return (
+                <Transition
+                  key={item.href}
+                  mounted={mounted}
+                  transition="slide-right"
+                  duration={300}
+                  timingFunction="ease"
+                  exitDuration={150}
+                >
+                  {(styles) => (
+                    <Tooltip label={item.label} position="right" disabled={opened}>
+                      <Button
+                        variant={isActive ? 'light' : 'subtle'}
+                        color={isActive ? 'orange' : 'gray'}
+                        leftSection={<item.icon size="1rem" />}
+                        justify="flex-start"
+                        fullWidth
+                        radius="md"
+                        size="sm"
+                        onClick={() => router.push(item.href)}
+                        style={{
+                          ...styles,
+                          animationDelay: `${index * 50}ms`,
+                          transition: 'all 0.2s ease',
+                          fontWeight: isActive ? 600 : 500,
+                          fontSize: '0.875rem',
+                          height: '40px',
+                          border: isActive ? '1px solid var(--orange-3)' : 'none',
+                        }}
+                      >
+                        {item.label}
+                      </Button>
+                    </Tooltip>
+                  )}
+                </Transition>
+              )
+            })}
+          </Stack>
+
+          {/* Alt Bilgi */}
+          <Box style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+            <Divider mb="md" />
+            <Text size="xs" c="dimmed" ta="center" style={{ lineHeight: 1.4 }}>
+              TrizPOS v1.0
+              <br />
+              © 2024 Triz Global
+            </Text>
+          </Box>
         </Stack>
       </AppShell.Navbar>
 
       <AppShell.Main 
         style={{
           background: 'var(--background)',
-          minHeight: 'calc(100vh - 80px)',
+          minHeight: 'calc(100vh - 70px)',
         }}
       >
         <Transition
           mounted={mounted}
           transition="fade"
-          duration={500}
+          duration={300}
           timingFunction="ease"
         >
           {(styles) => (
-            <div style={styles} className="animate-fade-in">
+            <div style={styles}>
               {children}
             </div>
           )}
